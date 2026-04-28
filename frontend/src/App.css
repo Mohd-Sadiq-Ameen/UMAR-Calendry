@@ -71,13 +71,11 @@ body {
   width: 260px;
   background: var(--white);
   border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
   position: fixed;
+  top: 0;
+  left: 0;
   height: 100vh;
   z-index: 100;
-  overflow-x: hidden;
-  /* prevent content from bleeding out */
   overflow-y: auto;
 }
 
@@ -149,16 +147,26 @@ body {
 } */
 
 /* Main Content */
+/* DIAGNOSTIC – force full width on everything inside main content */
+
+/* Ensure main content respects sidebar width */
 .main-content {
   margin-left: 260px;
+  width: calc(100% - 260px);
+  max-width: none;
   padding: 24px 32px;
-  background: #f6f8fb;
   min-height: 100vh;
 }
 
-.sidebar.collapsed+.main-content {
-  margin-left: 80px;
+/* When sidebar collapsed (if you use that feature) */
+.sidebar.collapsed {
+  width: 80px;
 }
+.sidebar.collapsed + .main-content {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
 
 /* Header */
 .app-header {
@@ -178,16 +186,23 @@ body {
 
 /* Content Area */
 .content-area {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 0;
 }
 
+.analytics-page {
+  padding: 0;
+}
+.charts-container {
+  padding: 28px;
+}
+
+
 /* Calendar Container */
 .calendar-container {
-  background: var(--white);
-  border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-lg);
-  animation: fadeInUp 0.5s ease;
 }
 
 @keyframes fadeInUp {
@@ -294,11 +309,10 @@ body {
   letter-spacing: 0.5px;
 }
 
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 1px;
-  background: var(--border);
+.calendar-grid,
+.week-header-professional,
+.week-body-professional {
+  width: 100%;
 }
 
 .calendar-day {
@@ -393,11 +407,7 @@ body {
 
 /* Event Card Styles */
 .event-list-container {
-  background: var(--white);
-  border-radius: var(--radius-lg);
   padding: 28px;
-  box-shadow: var(--shadow-lg);
-  animation: fadeInUp 0.5s ease;
 }
 
 .event-list-header {
@@ -958,23 +968,11 @@ form {
 }
 
 /* Professional Week View */
-.week-view-professional {
-  background: var(--white);
-  border-radius: var(--radius-lg);
+.week-view-professional,
+.day-view-professional {
   overflow-x: auto;
-  overflow-y: auto;
-  max-height: 70vh;
 }
 
-.week-header-professional {
-  display: grid;
-  grid-template-columns: 80px repeat(7, 1fr);
-  position: sticky;
-  top: 0;
-  background: var(--white);
-  z-index: 10;
-  border-bottom: 2px solid var(--border);
-}
 
 .time-column-header {
   padding: 16px;
@@ -1274,4 +1272,28 @@ form {
   .date-large {
     font-size: 14px;
   }
+}
+
+/* Force all main content panels to use full available width */
+.content-area,
+.content-area > div,
+.calendar-container,
+.event-list-container,
+.charts-container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Remove any max-width from analytics page */
+.analytics-page {
+  padding: 0;
+}
+
+/* Override grid container to take full width */
+.charts-grid {
+  width: 100%;
 }

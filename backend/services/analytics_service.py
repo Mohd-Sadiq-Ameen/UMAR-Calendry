@@ -5,8 +5,22 @@ class AnalyticsService:
     
     @staticmethod
     def calculate_duration_hours(start_time, end_time):
-        start = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
-        end = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+        try:
+            start = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
+            end = datetime.fromisoformat(end_time.replace('Z', '+00:00'))
+        except ValueError:
+            try:
+                start_base = start_time.split('.')[0]
+                end_base = end_time.split('.')[0]
+                if len(start_base) == 16:
+                    start_base += ':00'
+                if len(end_base) == 16:
+                    end_base += ':00'
+                start = datetime.fromisoformat(start_base.replace('Z', '+00:00'))
+                end = datetime.fromisoformat(end_base.replace('Z', '+00:00'))
+            except Exception:
+                print(f"Failed to parse dates: start={start_time}, end={end_time}")
+                return 0.0
         duration = end - start
         return duration.total_seconds() / 3600
     

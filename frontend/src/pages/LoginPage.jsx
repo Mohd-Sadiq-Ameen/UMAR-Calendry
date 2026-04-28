@@ -8,13 +8,15 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    name: "",
+    full_name: "",
     confirmPassword: "",
+    role: "customer", // or 'provider'
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [serverMessage, setServerMessage] = useState("");
 
   const handleChange = (e) => {
     setFormData({
@@ -28,64 +30,83 @@ export default function LoginPage() {
 
   const validateForm = () => {
     const newErrors = {};
-
     if (!formData.email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
     }
-
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-
     if (!isLogin) {
-      if (!formData.name) {
-        newErrors.name = "Full name is required";
+      if (!formData.full_name) {
+        newErrors.full_name = "Full name is required";
       }
       if (formData.password !== formData.confirmPassword) {
         newErrors.confirmPassword = "Passwords do not match";
       }
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const checkIfProvider = async (email) => {
-    try {
-      const response = await fetch("http://localhost:5000/api/providers");
-      const data = await response.json();
-      if (data.success) {
-        return data.data.some((p) => p.email === email);
-      }
-      return false;
-    } catch (error) {
-      console.error("Failed to check provider status:", error);
-      return false;
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsLoading(true);
+    if (!validateForm()) return;
 
-      setTimeout(async () => {
-        setIsLoading(false);
+    setIsLoading(true);
+    setServerMessage("");
+
+    const url = isLogin
+      ? "http://localhost:5000/api/login"
+      : "http://localhost:5000/api/register";
+
+    const payload = isLogin
+      ? { email: formData.email, password: formData.password }
+      : {
+          email: formData.email,
+          password: formData.password,
+          full_name: formData.full_name,
+          role: formData.role,
+        };
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (data.success) {
         setShowSuccess(true);
-
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("userEmail", formData.email);
+        localStorage.setItem("userRole", data.user?.role || (isLogin ? "customer" : formData.role));
+        localStorage.setItem("providerId", data.user?.provider_id || "");
 
-        const isProvider = await checkIfProvider(formData.email);
-
+        // Redirect after success message
         setTimeout(() => {
-          navigate(isProvider ? "/dashboard" : "/calendar");
+          const role = data.user?.role || formData.role;
+          if (role === "provider") {
+            navigate("/calendar/dashboard");
+          } else {
+            navigate("/calendar");
+          }
         }, 1500);
-      }, 1500);
+      } else {
+        setServerMessage(data.message || (isLogin ? "Login failed" : "Registration failed"));
+        setShowSuccess(false);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Auth error:", error);
+      setServerMessage("Network error. Is the backend running?");
+      setIsLoading(false);
+    } finally {
+      if (!showSuccess) setIsLoading(false);
     }
   };
 
@@ -110,23 +131,34 @@ export default function LoginPage() {
                 </button>
               </div>
 
+              {serverMessage && <div className="error-message" style={{textAlign: 'center', marginBottom: '1rem'}}>{serverMessage}</div>}
+
               <form onSubmit={handleSubmit} className="login-form">
                 {!isLogin && (
-                  <div className={`form-group ${errors.name ? "error" : ""}`}>
-                    <div className="input-wrapper">
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        placeholder=" "
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                      />
-                      <label htmlFor="name">Full Name</label>
+                  <>
+                    <div className={`form-group ${errors.full_name ? "error" : ""}`}>
+                      <div className="input-wrapper">
+                        <input
+                          type="text"
+                          name="full_name"
+                          id="full_name"
+                          placeholder=" "
+                          value={formData.full_name}
+                          onChange={handleChange}
+                          required
+                        />
+                        <label htmlFor="full_name">Full Name</label>
+                      </div>
+                      {errors.full_name && <span className="error-message">{errors.full_name}</span>}
                     </div>
-                    {errors.name && <span className="error-message">{errors.name}</span>}
-                  </div>
+                    <div className="form-group">
+                      <label>I am a:</label>
+                      <select name="role" value={formData.role} onChange={handleChange}>
+                        <option value="customer">Customer (book services)</option>
+                        <option value="provider">Service Provider (offer services)</option>
+                      </select>
+                    </div>
+                  </>
                 )}
 
                 <div className={`form-group ${errors.email ? "error" : ""}`}>
@@ -196,9 +228,7 @@ export default function LoginPage() {
                         Remember me
                       </span>
                     </label>
-                    <a href="#" className="forgot-password">
-                      Forgot password?
-                    </a>
+                    <a href="#" className="forgot-password">Forgot password?</a>
                   </div>
                 )}
 
@@ -217,6 +247,7 @@ export default function LoginPage() {
                       e.preventDefault();
                       setIsLogin(!isLogin);
                       setErrors({});
+                      setServerMessage("");
                     }}
                   >
                     {isLogin ? "Sign up" : "Sign in"}

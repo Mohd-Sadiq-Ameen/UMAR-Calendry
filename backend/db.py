@@ -3,30 +3,23 @@ import os
 from config import Config
 
 def get_db_connection():
-    """Get a database connection"""
     os.makedirs(os.path.dirname(Config.DATABASE_PATH), exist_ok=True)
-    
     conn = sqlite3.connect(Config.DATABASE_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-def add_city_column_if_missing():
-    """Add city column to providers table if it doesn't exist"""
+def add_column_if_missing(table, column, column_type):
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # Check if city column exists
-    cursor.execute("PRAGMA table_info(providers)")
+    cursor.execute(f"PRAGMA table_info({table})")
     columns = [col[1] for col in cursor.fetchall()]
-    if 'city' not in columns:
-        cursor.execute("ALTER TABLE providers ADD COLUMN city TEXT")
+    if column not in columns:
+        cursor.execute(f"ALTER TABLE {table} ADD COLUMN {column} {column_type}")
         conn.commit()
-        print("✓ Added 'city' column to providers table")
-    
+        print(f"✓ Added '{column}' to {table}")
     conn.close()
 
 def init_db():
-    """Initialize the database with tables"""
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -67,6 +60,20 @@ def init_db():
         )
     ''')
     
+    # Create users table (NEW)
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT,
+            role TEXT DEFAULT 'customer',
+            provider_id INTEGER,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (provider_id) REFERENCES providers(id)
+        )
+    ''')
+    
     # Create bookings table
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS bookings (
@@ -93,8 +100,8 @@ def init_db():
     conn.commit()
     conn.close()
     
-    # Add city column if missing (for existing databases)
-    add_city_column_if_missing()
+    # Add missing columns (for existing databases)
+    add_column_if_missing('providers', 'city', 'TEXT')
     
     print("✓ Database initialized successfully")
 

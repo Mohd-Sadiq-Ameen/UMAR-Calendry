@@ -1,0 +1,392 @@
+/* Explore.css – Professional, responsive, matches app design */
+
+.explore-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 24px;
+  min-height: 100vh;
+  background: var(--gray-bg, #f8fafc);
+}
+
+.explore-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.explore-header h1 {
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary, #6366f1), var(--secondary, #8b5cf6));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 8px;
+}
+
+.explore-header p {
+  color: var(--gray, #64748b);
+  font-size: 16px;
+}
+
+/* Filters bar */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+  background: var(--white, white);
+  padding: 16px 20px;
+  border-radius: 60px;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0,0,0,0.05));
+  border: 1px solid var(--border, #e2e8f0);
+}
+
+.search-input-wrapper {
+  flex: 2;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gray-bg);
+  padding: 8px 16px;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+}
+
+.search-icon {
+  font-size: 18px;
+  color: var(--gray-light);
+}
+
+.search-input-wrapper input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+}
+
+.filter-select {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.clear-filters {
+  padding: 8px 20px;
+  border-radius: 40px;
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger, #ef4444);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.clear-filters:hover {
+  background: var(--danger);
+  color: white;
+}
+
+/* Results info */
+.results-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--gray-dark);
+}
+
+.sort-hint {
+  font-size: 12px;
+  color: var(--gray-light);
+}
+
+/* Provider cards grid */
+.providers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.provider-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.provider-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.card-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 40px;
+}
+
+.provider-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.provider-info h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: var(--dark);
+}
+
+.service-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 12px;
+}
+
+.description {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+}
+
+.duration {
+  font-size: 12px;
+  color: var(--gray-light);
+}
+
+.location {
+  font-size: 12px;
+  color: var(--gray);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.book-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.book-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Loading & empty states */
+.loading-state {
+  text-align: center;
+  padding: 80px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px;
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px dashed var(--border);
+}
+
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+/* Booking modal – reuses your existing modal styles but ensure consistency */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.booking-modal {
+  background: var(--white);
+  border-radius: 28px;
+  width: 90%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  box-shadow: var(--shadow-xl);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--gray);
+}
+
+.booking-form {
+  margin-top: 24px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--gray-dark);
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  background: var(--white);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.book-confirm-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.processing {
+  text-align: center;
+  padding: 40px;
+}
+
+.booking-success {
+  text-align: center;
+}
+
+.success-icon {
+  width: 60px;
+  height: 60px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: white;
+  margin: 0 auto 16px;
+}
+
+.booking-details {
+  background: var(--gray-bg);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.zoom-link a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.done-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .explore-page {
+    padding: 24px 16px;
+  }
+  .filters-bar {
+    flex-direction: column;
+    border-radius: 24px;
+  }
+  .search-input-wrapper, .filter-select, .clear-filters {
+    width: 100%;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  .provider-card {
+    padding: 16px;
+  }
+}

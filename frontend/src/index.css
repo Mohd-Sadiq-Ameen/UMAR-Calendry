@@ -1,0 +1,197 @@
+
+/* ===============================
+   DESIGN SYSTEM (VARIABLES)
+=================================*/
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-light: #818cf8;
+  --primary-bg: #eef2ff;
+
+  --secondary: #ec4899;
+  --secondary-bg: #fce7f3;
+
+  --success: #10b981;
+  --success-bg: #d1fae5;
+
+  --warning: #f59e0b;
+
+  --danger: #ef4444;
+  --danger-bg: #fee2e2;
+
+  --dark: #0f172a;
+  --gray-dark: #334155;
+  --gray: #64748b;
+  --gray-light: #94a3b8;
+  --gray-bg: #f8fafc;
+
+  --white: #ffffff;
+  --border: #e2e8f0;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px rgb(0 0 0 / 0.1);
+
+  --radius: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+}
+
+/* ===============================
+   RESET
+=================================*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===============================
+   BASE
+=================================*/
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--gray-bg);
+  color: var(--dark);
+}
+
+/* ===============================
+   SCROLLBAR
+=================================*/
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-light);
+  border-radius: 4px;
+}
+
+/* ===============================
+   APP LAYOUT
+=================================*/
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 260px;
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  height: 100vh;
+}
+
+.main-content {
+  margin-left: 260px;
+  padding: 24px 32px;
+  min-height: 100vh;
+}
+
+/* ===============================
+   NAV
+=================================*/
+.nav-item {
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: var(--gray-dark);
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  background: var(--gray-bg);
+  color: var(--primary);
+}
+
+.nav-item.active {
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ===============================
+   CALENDAR (CORE)
+=================================*/
+.calendar-container {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-day {
+  min-height: 120px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.calendar-day:hover {
+  background: var(--gray-bg);
+}
+
+.calendar-day.today {
+  border: 2px solid var(--primary);
+  background: var(--primary-bg);
+}
+
+/* ===============================
+   EVENTS
+=================================*/
+.event-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.event-badge.meeting {
+  background: var(--primary-bg);
+  color: var(--primary);
+}
+
+.event-badge.task {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+/* ===============================
+   MODAL
+=================================*/
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: var(--white);
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  width: 500px;
+  max-width: 90%;
+}
+
+/* ===============================
+   BUTTONS
+=================================*/
+.btn-primary {
+  background: var(--primary);
+  color: white;
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}

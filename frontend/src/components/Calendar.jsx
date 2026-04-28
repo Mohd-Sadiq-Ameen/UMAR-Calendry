@@ -49,7 +49,7 @@ export default function Calendar({ events, onEventClick, onDateClick }) {
     return format(selectedDate, 'EEEE, MMMM d, yyyy');
   };
 
-  // Month View (uses your existing CSS classes)
+  // ----- MODERN MONTH VIEW -----
   const renderMonthView = () => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(currentDate);
@@ -58,29 +58,42 @@ export default function Calendar({ events, onEventClick, onDateClick }) {
     const days = eachDayOfInterval({ start: startDate, end: endDate });
 
     return (
-      <div className="month-view">
-        <div className="weekdays-header">
-          {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(day => <div key={day} className="weekday">{day}</div>)}
+      <div className="cal-month-view">
+        <div className="cal-weekdays">
+          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+            <div key={day} className="cal-weekday">{day}</div>
+          ))}
         </div>
-        <div className="calendar-grid">
+        <div className="cal-days-grid">
           {days.map((day, idx) => {
             const dayEvents = getEventsForDate(day);
             const isCurrentMonth = isSameMonth(day, currentDate);
             const isTodayDate = isToday(day);
             const isSelected = isSameDay(day, selectedDate);
             return (
-              <div key={idx}
-                className={`calendar-day ${!isCurrentMonth ? 'other-month' : ''} ${isTodayDate ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
-                onClick={() => onDateClick(day)}>
-                <div className="day-number">{format(day, 'd')}</div>
-                <div className="day-events">
-                  {dayEvents.slice(0, 3).map(ev => (
-                    <div key={ev.id} className={`event-badge ${ev.event_type}`} onClick={(e) => { e.stopPropagation(); onEventClick(ev); }}>
-                      <span className="event-time-badge">{format(parseISO(ev.start_time), 'h:mm a')}</span>
-                      <span className="event-title-badge">{ev.title}</span>
+              <div
+                key={idx}
+                className={`cal-day-cell 
+                  ${!isCurrentMonth ? 'other-month' : ''} 
+                  ${isTodayDate ? 'today' : ''} 
+                  ${isSelected ? 'selected' : ''}`}
+                onClick={() => onDateClick(day)}
+              >
+                <div className="cal-day-number">{format(day, 'd')}</div>
+                <div className="cal-day-events">
+                  {dayEvents.slice(0, 2).map(ev => (
+                    <div
+                      key={ev.id}
+                      className={`cal-event ${ev.event_type}`}
+                      onClick={(e) => { e.stopPropagation(); onEventClick(ev); }}
+                    >
+                      <span className="cal-event-time">{format(parseISO(ev.start_time), 'h:mm a')}</span>
+                      <span className="cal-event-title">{ev.title}</span>
                     </div>
                   ))}
-                  {dayEvents.length > 3 && <div className="more-events">+{dayEvents.length-3} more</div>}
+                  {dayEvents.length > 2 && (
+                    <div className="cal-more-events">+{dayEvents.length - 2} more</div>
+                  )}
                 </div>
               </div>
             );
@@ -90,39 +103,53 @@ export default function Calendar({ events, onEventClick, onDateClick }) {
     );
   };
 
-  // Week View (simplified but uses your CSS)
+  // ----- MODERN WEEK VIEW -----
   const renderWeekView = () => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-    const hours = Array.from({ length: 24 }, (_, i) => i).slice(8,20); // 8am-8pm
+    const hours = Array.from({ length: 24 }, (_, i) => i).slice(8, 20); // 8 AM – 8 PM
 
     return (
-      <div className="week-view-professional">
-        <div className="week-header-professional">
-          <div className="time-column-header">Time</div>
+      <div className="cal-week-view">
+        <div className="cal-week-header">
+          <div className="cal-time-col"></div>
           {weekDays.map((day, i) => (
-            <div key={i} className={`day-column-header ${isToday(day) ? 'today' : ''}`}>
-              <div className="day-name">{format(day, 'EEE')}</div>
-              <div className="day-date">{format(day, 'MMM d')}</div>
+            <div key={i} className={`cal-week-day-header ${isToday(day) ? 'today' : ''}`}>
+              <div className="cal-week-day-name">{format(day, 'EEE')}</div>
+              <div className="cal-week-day-date">{format(day, 'MMM d')}</div>
             </div>
           ))}
         </div>
-        <div className="week-body-professional">
+        <div className="cal-week-times">
           {hours.map(hour => (
-            <div key={hour} className="time-slot-row">
-              <div className="time-label">{format(setHours(setMinutes(new Date(),0), hour), 'h a')}</div>
-              <div className="time-slots">
+            <div key={hour} className="cal-hour-row">
+              <div className="cal-hour-label">{format(setHours(setMinutes(new Date(), 0), hour), 'h a')}</div>
+              <div className="cal-hour-slots">
                 {weekDays.map((day, idx) => {
                   const slotEvents = getEventsForTimeSlot(day, hour);
                   return (
-                    <div key={idx} className="time-slot-cell" onClick={() => onDateClick(setHours(setMinutes(day,0), hour))}>
-                      {slotEvents.map(ev => (
-                        <div key={ev.id} className={`time-slot-event ${ev.event_type}`} style={{ height: `${Math.min((new Date(ev.end_time)-new Date(ev.start_time))/60000/60*80, 200)}px` }}
-                             onClick={(e) => { e.stopPropagation(); onEventClick(ev); }}>
-                          <div className="event-time-slot">{formatEventTime(ev)}</div>
-                          <div className="event-title-slot">{ev.title}</div>
-                        </div>
-                      ))}
+                    <div
+                      key={idx}
+                      className="cal-hour-slot"
+                      onClick={() => onDateClick(setHours(setMinutes(day, 0), hour))}
+                    >
+                      {slotEvents.map(ev => {
+                        const start = parseISO(ev.start_time);
+                        const end = parseISO(ev.end_time);
+                        const durationHours = (end - start) / (1000 * 60 * 60);
+                        const height = Math.min(durationHours * 70, 180);
+                        return (
+                          <div
+                            key={ev.id}
+                            className={`cal-slot-event ${ev.event_type}`}
+                            style={{ height: `${height}px` }}
+                            onClick={(e) => { e.stopPropagation(); onEventClick(ev); }}
+                          >
+                            <div className="cal-slot-event-time">{formatEventTime(ev)}</div>
+                            <div className="cal-slot-event-title">{ev.title}</div>
+                          </div>
+                        );
+                      })}
                     </div>
                   );
                 })}
@@ -134,32 +161,40 @@ export default function Calendar({ events, onEventClick, onDateClick }) {
     );
   };
 
-  // Day View (simplified)
+  // ----- MODERN DAY VIEW -----
   const renderDayView = () => {
-    const hours = Array.from({ length: 24 }, (_, i) => i).slice(6,22);
+    const hours = Array.from({ length: 24 }, (_, i) => i).slice(6, 22);
     const dayEvents = getEventsForDate(selectedDate);
+
     return (
-      <div className="day-view-professional">
-        <div className="day-header-professional">
-          <div className="day-large">{format(selectedDate, 'dddd')}</div>
-          <div className="date-large">{format(selectedDate, 'MMMM d, yyyy')}</div>
-          <div className="event-total">{dayEvents.length} events today</div>
+      <div className="cal-day-view">
+        <div className="cal-day-header">
+          <div className="cal-day-title">{format(selectedDate, 'EEEE, MMMM d, yyyy')}</div>
+          <div className="cal-day-event-count">{dayEvents.length} events</div>
         </div>
-        <div className="day-timeline">
+        <div className="cal-day-timeline">
           {hours.map(hour => {
             const hourEvents = dayEvents.filter(e => getHours(parseISO(e.start_time)) === hour);
             return (
-              <div key={hour} className="timeline-row">
-                <div className="timeline-label">{format(setHours(setMinutes(new Date(),0), hour), 'h a')}</div>
-                <div className="timeline-events">
-                  {hourEvents.length ? hourEvents.map(ev => (
-                    <div key={ev.id} className={`timeline-event ${ev.event_type}`} onClick={() => onEventClick(ev)}>
-                      <div className="timeline-event-time">{formatEventTime(ev)}</div>
-                      <div className="timeline-event-title">{ev.title}</div>
-                      {ev.zoom_link && <div className="timeline-event-zoom">🎥 Zoom Meeting</div>}
+              <div key={hour} className="cal-day-hour-row">
+                <div className="cal-day-hour-label">{format(setHours(setMinutes(new Date(), 0), hour), 'h a')}</div>
+                <div className="cal-day-hour-events">
+                  {hourEvents.length ? (
+                    hourEvents.map(ev => (
+                      <div
+                        key={ev.id}
+                        className={`cal-day-event ${ev.event_type}`}
+                        onClick={() => onEventClick(ev)}
+                      >
+                        <div className="cal-day-event-time">{formatEventTime(ev)}</div>
+                        <div className="cal-day-event-title">{ev.title}</div>
+                        {ev.zoom_link && <div className="cal-day-event-zoom">🎥 Zoom</div>}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="cal-day-empty-slot" onClick={() => onDateClick(setHours(setMinutes(selectedDate, 0), hour))}>
+                      + Add event
                     </div>
-                  )) : (
-                    <div className="timeline-empty" onClick={() => onDateClick(setHours(setMinutes(selectedDate,0), hour))}>+ Add event</div>
                   )}
                 </div>
               </div>
@@ -171,21 +206,21 @@ export default function Calendar({ events, onEventClick, onDateClick }) {
   };
 
   return (
-    <div className="calendar-container">
-      <div className="calendar-header">
-        <div className="calendar-nav">
-          <button onClick={handlePrevious} className="nav-btn">←</button>
-          <button onClick={handleToday} className="today-btn">Today</button>
-          <button onClick={handleNext} className="nav-btn">→</button>
+    <div className="cal-container">
+      <div className="cal-header">
+        <div className="cal-nav-buttons">
+          <button onClick={handlePrevious} className="cal-nav-btn">←</button>
+          <button onClick={handleToday} className="cal-today-btn">Today</button>
+          <button onClick={handleNext} className="cal-nav-btn">→</button>
         </div>
-        <h2 className="calendar-title">{getCurrentPeriod()}</h2>
-        <div className="view-toggle">
+        <h2 className="cal-title">{getCurrentPeriod()}</h2>
+        <div className="cal-view-buttons">
           <button className={view === 'month' ? 'active' : ''} onClick={() => setView('month')}>Month</button>
           <button className={view === 'week' ? 'active' : ''} onClick={() => setView('week')}>Week</button>
           <button className={view === 'day' ? 'active' : ''} onClick={() => setView('day')}>Day</button>
         </div>
       </div>
-      <div className="calendar-content">
+      <div className="cal-body">
         {view === 'month' && renderMonthView()}
         {view === 'week' && renderWeekView()}
         {view === 'day' && renderDayView()}

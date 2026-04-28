@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./LandingPage.css";
+import Logo from '../components/Logo';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -33,8 +34,7 @@ export default function LandingPage() {
       <nav className={`landing-nav ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-container">
           <div className="nav-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-            <span className="logo-icon">📅</span>
-            <span className="logo-text">Calendry</span>
+            <Logo size={28} />
           </div>
           <div className="nav-links">
             <a href="#features">Features</a>

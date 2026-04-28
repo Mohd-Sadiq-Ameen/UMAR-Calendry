@@ -1711,3 +1711,16 @@ form {
   border-color: var(--primary);
   color: var(--primary);
 }
+
+.logo-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+.logo-icon-wrapper:hover {
+  transform: scale(1.05);
+}
+.logo-icon {
+  filter: drop-shadow(0 2px 4px rgba(99,102,241,0.3));
+}

@@ -5,6 +5,7 @@ import {
   Navigate,
   Link,
 } from "react-router-dom";
+
 import { useState, useEffect } from "react";
 import Calendar from "./components/Calendar";
 import EventForm from "./components/EventForm";
@@ -113,7 +114,7 @@ function CalendarApp() {
       <aside className={`sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
         <div className="logo-container">
           <Link to="/" className="logo" style={{ textDecoration: "none" }}>
-            <span className="logo-icon">📅</span>
+            
             {!sidebarCollapsed && <span className="logo-text">Calendry</span>}
           </Link>
           <button

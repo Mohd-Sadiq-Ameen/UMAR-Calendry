@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
+import Logo from '../components/Logo';
+
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -117,7 +119,7 @@ export default function LoginPage() {
           {!showSuccess ? (
             <>
               <div className="login-header">
-                <div className="brand-icon">📅</div>
+                <Logo size={48} />
                 <h2>{isLogin ? "Welcome Back" : "Create Account"}</h2>
                 <p>{isLogin ? "Sign in to your account" : "Get started with Calendry"}</p>
               </div>

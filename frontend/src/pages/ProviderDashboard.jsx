@@ -37,14 +37,12 @@ export default function ProviderDashboard() {
     loadProvider();
   }, []);
 
-  // Load provider and auto‑create if missing
   const loadProvider = async () => {
     setLoading(true);
     let existingProvider = await fetchProviderFromApi();
     if (!existingProvider) {
-      // No provider found – create one automatically
       await createProviderIfMissing();
-      existingProvider = await fetchProviderFromApi(); // fetch again
+      existingProvider = await fetchProviderFromApi();
     }
     if (existingProvider) {
       setProvider(existingProvider);
@@ -58,8 +56,9 @@ export default function ProviderDashboard() {
         duration: existingProvider.duration || "60",
         city: existingProvider.city || "",
       });
+      // ✅ Fetch events only after we have the provider ID
+      await fetchEvents(existingProvider.id);
     }
-    await fetchEvents();
     setLoading(false);
   };
 
@@ -81,7 +80,7 @@ export default function ProviderDashboard() {
   const createProviderIfMissing = async () => {
     const defaultProvider = {
       user_id: userEmail.split("@")[0],
-      name: userEmail.split("@")[0], // fallback name
+      name: userEmail.split("@")[0],
       email: userEmail,
       service_type: "teacher",
       service_name: "Consultation",
@@ -90,7 +89,6 @@ export default function ProviderDashboard() {
       duration: 60,
       city: "Mumbai",
     };
-
     try {
       const response = await fetch("http://localhost:5000/api/providers", {
         method: "POST",
@@ -111,9 +109,12 @@ export default function ProviderDashboard() {
     }
   };
 
-  const fetchEvents = async () => {
+  // ✅ Pass provider_id to the events endpoint
+  const fetchEvents = async (providerId) => {
     try {
-      const response = await fetch("http://localhost:5000/api/events");
+      const response = await fetch(
+        `http://localhost:5000/api/events?provider_id=${providerId}`
+      );
       const data = await response.json();
       if (data.success) setEvents(data.data);
     } catch (error) {
@@ -134,14 +135,15 @@ export default function ProviderDashboard() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
-        },
+        }
       );
       const data = await response.json();
       if (data.success) {
         alert("Profile updated successfully!");
-        // Refresh provider data
         const updated = await fetchProviderFromApi();
         if (updated) setProvider(updated);
+        // Refresh events with the same provider ID
+        await fetchEvents(provider.id);
       } else {
         alert("Update failed: " + data.message);
       }
@@ -168,7 +170,7 @@ export default function ProviderDashboard() {
         setZoomLink(data.data.zoom_link);
         alert(`Zoom meeting created! Link: ${data.data.zoom_link}`);
         setShowZoomForm(false);
-        fetchEvents();
+        if (provider) await fetchEvents(provider.id);
       } else {
         alert("Failed to create Zoom meeting: " + data.message);
       }
@@ -197,7 +199,6 @@ export default function ProviderDashboard() {
 
   return (
     <div className="provider-dashboard">
-      {/* Stats grid */}
       <div className="dashboard-stats">
         <div className="stat-card stat-blue">
           <div className="stat-icon">📦</div>
@@ -236,7 +237,6 @@ export default function ProviderDashboard() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="dashboard-tabs">
         <button
           className={`tab ${activeTab === "profile" ? "active" : ""}`}
@@ -254,14 +254,10 @@ export default function ProviderDashboard() {
           className={`tab ${activeTab === "appointments" ? "active" : ""}`}
           onClick={() => setActiveTab("appointments")}
         >
-          <span>
-           
-          </span>{" "}
-          Appointments
+          <span>📅</span> Appointments
         </button>
       </div>
 
-      {/* Profile Tab */}
       {activeTab === "profile" && (
         <div className="profile-tab">
           <div className="preview-card-dash">
@@ -393,7 +389,6 @@ export default function ProviderDashboard() {
         </div>
       )}
 
-      {/* Zoom Meetings Tab */}
       {activeTab === "zoom" && (
         <div className="zoom-tab">
           <button
@@ -482,7 +477,6 @@ export default function ProviderDashboard() {
         </div>
       )}
 
-      {/* Appointments Tab */}
       {activeTab === "appointments" && (
         <div className="appointments-tab">
           <h3>Upcoming Appointments</h3>

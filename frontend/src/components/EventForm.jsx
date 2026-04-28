@@ -68,6 +68,7 @@ export default function EventForm({ event, onClose, onSuccess }) {
         ...formData,
         start_time: new Date(formData.start_time).toISOString(),
         end_time: new Date(formData.end_time).toISOString(),
+         provider_id: localStorage.getItem('providerId')
       };
 
       let response;

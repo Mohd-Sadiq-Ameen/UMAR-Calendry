@@ -5,7 +5,6 @@ import {
   Navigate,
   Link,
 } from "react-router-dom";
-
 import { useState, useEffect } from "react";
 import Calendar from "./components/Calendar";
 import EventForm from "./components/EventForm";
@@ -32,6 +31,9 @@ function CalendarApp() {
   const [analytics, setAnalytics] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // ✅ Get provider ID from localStorage
+  const providerId = localStorage.getItem("providerId");
+
   useEffect(() => {
     fetchEvents();
     fetchAnalytics();
@@ -40,7 +42,11 @@ function CalendarApp() {
   const fetchEvents = async (newFilters = filters) => {
     try {
       setLoading(true);
-      const response = await api.getEvents(newFilters);
+      // ✅ Always pass providerId
+      const response = await api.getEvents({
+        ...newFilters,
+        provider_id: providerId,
+      });
       setEvents(response.data || []);
     } catch (error) {
       console.error("Failed to fetch events:", error);
@@ -51,7 +57,11 @@ function CalendarApp() {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await api.getAnalytics({ days: 30 });
+      // ✅ Always pass providerId
+      const response = await api.getAnalytics({
+        days: 30,
+        provider_id: providerId,
+      });
       setAnalytics(response.data);
     } catch (error) {
       console.error("Failed to fetch analytics:", error);
@@ -106,6 +116,7 @@ function CalendarApp() {
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("providerId"); // ✅ Also clear providerId
     window.location.href = "/";
   };
 
@@ -114,7 +125,6 @@ function CalendarApp() {
       <aside className={`sidebar ${sidebarCollapsed ? "collapsed" : ""}`}>
         <div className="logo-container">
           <Link to="/" className="logo" style={{ textDecoration: "none" }}>
-            
             {!sidebarCollapsed && <span className="logo-text">Calendry</span>}
           </Link>
           <button
@@ -268,7 +278,6 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/explore" element={<Explore />} />
-        {/* Register route removed – providers register via dashboard? Keep if needed but avoid confusion */}
         <Route
           path="/calendar/*"
           element={

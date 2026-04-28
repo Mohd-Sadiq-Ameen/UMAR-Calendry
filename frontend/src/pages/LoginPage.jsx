@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
-import Logo from '../components/Logo';
-
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -12,7 +10,7 @@ export default function LoginPage() {
     password: "",
     full_name: "",
     confirmPassword: "",
-    role: "customer", // or 'provider'
+    role: "customer",
   });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
@@ -87,6 +85,8 @@ export default function LoginPage() {
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("userEmail", formData.email);
         localStorage.setItem("userRole", data.user?.role || (isLogin ? "customer" : formData.role));
+        
+        // ✅ Store provider ID (if any)
         localStorage.setItem("providerId", data.user?.provider_id || "");
 
         // Redirect after success message
@@ -119,7 +119,7 @@ export default function LoginPage() {
           {!showSuccess ? (
             <>
               <div className="login-header">
-                <Logo size={48} />
+                <div className="brand-icon">📅</div>
                 <h2>{isLogin ? "Welcome Back" : "Create Account"}</h2>
                 <p>{isLogin ? "Sign in to your account" : "Get started with Calendry"}</p>
               </div>
